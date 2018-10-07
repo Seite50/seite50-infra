@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: seite50-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seite50-backend
+  template:
+    metadata:
+      labels:
+        app: seite50-backend
+    spec:
+      containers:
+      - name: seite50-backend
+        image: seite50/backend
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: seite50-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seite50-frontend
+  template:
+    metadata:
+      labels:
+        app: seite50-frontend
+    spec:
+      containers:
+      - name: seite50-frontend
+        image: seite50/frontend
+        ports:
+        - containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: seite50-backend
+  labels:
+    app: seite50-backend
+spec:
+  selector:
+    app: seite50-backend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: seite50-frontend
+  labels:
+    app: seite50-frontend
+spec:
+  selector:
+    app: seite50-frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: seite50-ingress
+  labels:
+    app: seite50
+  annotations:
+    nginx.ingress.kubernetes.io/app-root: /api
+spec:
+  rules:
+  - host: seite50.lab
+    http:
+      paths:
+      - path: /api
+        backend:
+          serviceName: seite50-backend
+          servicePort: 8080
+      - path: /
+        backend:
+          serviceName: seite50-frontend
+          servicePort: 80
