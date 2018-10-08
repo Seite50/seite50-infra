@@ -1,12 +1,25 @@
 # Voraussetzungen
-1. Kubernetes
+## Kubernetes
 --> Ist in Docker for Desktop integriert
 
-2. Kubernetes Nginx-Ingress Controller (https://github.com/kubernetes/ingress-nginx)
---> geht mit Hel: helm install stable/nginx-ingress --name ingress-nginx --namespace ingress-nginx --set controller.extraArgs.enable-ssl-passthrough=""
+## Ingress
+helm install --name ingress --namespace kube-system --set dashboard.enabled=true,dashboard.domain=traefik.lab stable/traefik
 
-3. Hosts Eintrag
-127.0.0.1 seite50.lab
+### Alternativ
+https://istio.io/docs/setup/kubernetes/download-release/
+helm install install/kubernetes/helm/istio --name istio --namespace istio-system
+
+## Wildcard DNS
+ *.lab --> 127.0.0.1
 
 # Starten der aktuellen Imgages
 kubectl create -f seite50.yaml
+
+## Seite50
+http://seite50.lab
+http://seite50.lab/api
+
+## Ingress Dashboard (Traefik)
+http://traefik.lab/dashboard/
+
+

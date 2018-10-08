@@ -76,8 +76,6 @@ metadata:
   name: seite50-ingress
   labels:
     app: seite50
-  annotations:
-    nginx.ingress.kubernetes.io/app-root: /api
 spec:
   rules:
   - host: seite50.lab
