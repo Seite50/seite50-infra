@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: seite50-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seite50-backend
+  template:
+    metadata:
+      labels:
+        app: seite50-backend
+    spec:
+      containers:
+      - name: seite50-backend
+        image: seite50/backend
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: seite50-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seite50-frontend
+  template:
+    metadata:
+      labels:
+        app: seite50-frontend
+    spec:
+      containers:
+      - name: seite50-frontend
+        image: seite50/frontend
+        ports:
+        - containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: seite50-backend
+  labels:
+    app: seite50-backend
+spec:
+  selector:
+    app: seite50-backend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: seite50-frontend
+  labels:
+    app: seite50-frontend
+spec:
+  selector:
+    app: seite50-frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: seite50
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "seite50.lab"
+    - "api.seite50.lab"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: seite50-frontend
+spec:
+  hosts:
+  - "seite50.lab"
+  gateways:
+  - seite50
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: 80
+        host: seite50-frontend
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: seite50-backend
+spec:
+  hosts:
+  - "api.seite50.lab"
+  gateways:
+  - seite50
+  http:
+  - match:
+    - uri:
+        prefix: /api
+    route:
+    - destination:
+        port:
+          number: 8080
+        host: seite50-backend

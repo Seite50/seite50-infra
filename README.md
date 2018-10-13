@@ -2,24 +2,30 @@
 ## Kubernetes
 --> Ist in Docker for Desktop integriert
 
-## Ingress
+## Ingress mit Traefik
 helm install --name ingress --namespace kube-system --set dashboard.enabled=true,dashboard.domain=traefik.lab stable/traefik
+kubectl create -f seite50-traefik.yaml
+### Ingress Dashboard (Traefik)
+http://traefik.lab/dashboard/
 
-### Alternativ
-https://istio.io/docs/setup/kubernetes/download-release/
-helm install install/kubernetes/helm/istio --name istio --namespace istio-system
+## Ingress mit Istio
+https://github.com/istio/istio/tree/master/install/kubernetes/helm/istio
+helm install install/kubernetes/helm/istio --name istio --namespace istio-system --set sidecarInjectorWebhook.enabled=true --set servicegraph.enabled=true --set tracing.enabled=true --set ingress.enabled=false --set gateways.istio-ingressgateway.enabled=false --set gateways.istio-egressgateway.enabled=false --set kiali.enabled=true
+
+kubectl create -f seite50-istio.yaml
+
+### Kiali Dashboard
+kubectl create -f istio.yaml
+http://kiali.lab
+
 
 ## Wildcard DNS
  *.lab --> 127.0.0.1
-
-# Starten der aktuellen Imgages
-kubectl create -f seite50.yaml
 
 ## Seite50
 http://seite50.lab
 http://seite50.lab/api
 
-## Ingress Dashboard (Traefik)
-http://traefik.lab/dashboard/
+
 
 
