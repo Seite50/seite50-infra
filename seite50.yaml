@@ -75,7 +75,11 @@ kind: Ingress
 metadata:
   name: seite50-ingress
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
+    # Based on: 
+    # Github-Issue: https://github.com/containous/traefik/issues/3494#event-1681004828
+    # Corresponding documentation: https://docs.traefik.io/user-guide/kubernetes/
+    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
   labels:
     app: seite50
 spec:
