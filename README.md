@@ -14,6 +14,8 @@ http://traefik.lab/dashboard/
 
 ## Ingress mit Istio
 https://github.com/istio/istio/tree/master/install/kubernetes/helm/istio
+Eventuell kubectl delete -f install/kubernetes/helm/istio/templates/crds.yaml falls istio schonmal installiert war
+
 helm install install/kubernetes/helm/istio --name istio --namespace istio-system --set sidecarInjectorWebhook.enabled=true --set servicegraph.enabled=true --set tracing.enabled=true --set ingress.enabled=false --set gateways.istio-ingressgateway.enabled=false --set gateways.istio-egressgateway.enabled=false --set kiali.enabled=true --set kiali.dashboard.passphrase=admin
 
 kubectl create -f seite50-istio.yaml
